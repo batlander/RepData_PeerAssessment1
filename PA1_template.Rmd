@@ -1,0 +1,94 @@
+---
+title: "Assigment 2nd week"
+output: 
+  html_document: 
+    keep_md: yes
+---
+# Read file
+
+```{r}
+library(tidyverse)
+library(readr)
+library(knitr)
+library(readr)
+library(lubridate)
+activity <- read_csv("./activity.csv", col_names = TRUE)
+```
+
+# Histogram
+
+```{r}
+hist <- group_by(activity, date) %>% summarise(sum(steps))
+names(hist) <-c("Date", "Steps")
+plot(hist$Steps, type = "h", xlab = " Days", ylab = "Steps")
+```
+
+# Mean and Median
+
+```{r}
+mean <- na.omit(hist$Steps)
+mean <- mean (mean)
+median <- na.omit(hist$Steps)
+median <- median(median)
+```
+
+The mean is `r mean` and the median is `r median`.
+
+# Activity Pattern
+
+```{r}
+timeplot <- group_by(activity, interval) %>% summarise(mean(steps, na.rm = TRUE))
+plot(timeplot, type ="l", xlab = "Interval", ylab = " Average Steps")
+max <- max(timeplot)
+```
+
+The biggest step interval is `r max`.
+
+# Missing Data
+
+```{r}
+
+# NAs number
+missing <- sum(is.na(activity$steps))
+
+# Dataset without NAs
+
+histna <- hist
+histna[is.na(histna)]<-mean
+
+# Plot
+
+plot(histna$Steps, type = "h", xlab = " Days", ylab = "Steps")
+
+# Mean and median
+
+media <- mean(histna$Steps)
+mediana <- median(histna$Steps)
+meandif <- abs(mean-media)
+mediandif <- abs (median - mediana)
+```
+
+Tne number of NAs is `r missing`.
+
+The new mean is `r media`and the new median is `r mediana`. And the diferences are `r meandif` and `r mediandif`.
+
+# Weekdays and weekends comparison
+
+```{r}
+
+
+week <- histna[wday(histna$Date) %in% 1:5,]
+wend <- histna[wday(histna$Date) %in% 6:7,]
+
+par(mfrow = c(2,1))
+plot(week, type ="l", xlab = "Weekdays", ylab = " Average Steps", col = "blue")
+plot(wend, type ="l", xlab = "Weekend", ylab = " Average Steps", col = "red")
+
+```
+
+
+
+
+
+
+
